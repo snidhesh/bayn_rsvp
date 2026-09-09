@@ -10,7 +10,7 @@ const empty: Lead = {
   email: "",
   intent: "Buying a home to live in",
   guests: "1",
-  arrival: "11:00 to 12:00",
+  arrival: "11:00 AM – 12:00 PM",
 };
 
 export default function RsvpForm() {
@@ -139,10 +139,10 @@ export default function RsvpForm() {
           value={values.arrival}
           onChange={(e) => setField("arrival", e.target.value as Lead["arrival"])}
         >
-          <option>11:00 to 12:00</option>
-          <option>12:00 to 13:30, with the masterplan presentation</option>
-          <option>13:30 to 15:00, with the second presentation</option>
-          <option>15:00 to 16:00, with the final presentation</option>
+          <option>11:00 AM – 12:00 PM</option>
+          <option>12:00 PM – 1:30 PM</option>
+          <option>1:30 PM – 3:00 PM</option>
+          <option>3:00 PM – 4:00 PM</option>
         </select>
       </div>
 

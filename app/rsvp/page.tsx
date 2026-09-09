@@ -46,8 +46,8 @@ export default function RsvpPage() {
           </h1>
           <p className="rsvp-body" style={{ marginTop: 16 }}>
             Enjoy an exclusive special offer available only during the Open House Day. Places in each
-            arrival slot are limited — we&apos;ll email your confirmation with a calendar invite
-            you can add in one tap.
+            arrival slot are limited. We will email your confirmation with a calendar invite you
+            can add in one tap.
           </p>
         </div>
 

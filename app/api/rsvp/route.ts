@@ -18,10 +18,10 @@ const LeadSchema = z.object({
   ]),
   guests: z.enum(["1", "2", "3", "4"]),
   arrival: z.enum([
-    "11:00 to 12:00",
-    "12:00 to 13:30, with the masterplan presentation",
-    "13:30 to 15:00, with the second presentation",
-    "15:00 to 16:00, with the final presentation",
+    "11:00 AM – 12:00 PM",
+    "12:00 PM – 1:30 PM",
+    "1:30 PM – 3:00 PM",
+    "3:00 PM – 4:00 PM",
   ]),
 });
 
@@ -42,8 +42,14 @@ export async function POST(req: Request) {
   }
   const lead = parsed.data;
 
-  // Fire-and-forget the CRM post — a CRM outage must not block a guest's confirmation.
-  postLead(lead).catch((err) => console.error("[rsvp] postLead threw", err));
+  // Post to CRM. postLead swallows its own errors and returns a status object,
+  // so a CRM outage does not throw here — the guest still gets their calendar
+  // invite. Awaiting (rather than fire-and-forget) is important on serverless:
+  // Vercel can otherwise terminate the process before the CRM request lands.
+  const crmResult = await postLead(lead);
+  if (!crmResult.ok) {
+    console.error(`[rsvp] CRM did not accept lead: status=${crmResult.status}`);
+  }
 
   try {
     const ics = buildIcs(lead);

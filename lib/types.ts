@@ -1,8 +1,8 @@
 export type ArrivalSlot =
-  | "11:00 to 12:00"
-  | "12:00 to 13:30, with the masterplan presentation"
-  | "13:30 to 15:00, with the second presentation"
-  | "15:00 to 16:00, with the final presentation";
+  | "11:00 AM – 12:00 PM"
+  | "12:00 PM – 1:30 PM"
+  | "1:30 PM – 3:00 PM"
+  | "3:00 PM – 4:00 PM";
 
 export type Intent =
   | "Buying a home to live in"

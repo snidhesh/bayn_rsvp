@@ -168,13 +168,13 @@ a {
 }
 .splash .open-house {
   font-family: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(24px, 3.4vw, 42px);
+  font-size: clamp(38px, 6.4vw, 72px);
   font-weight: 500;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--salt);
-  margin: 18px 0 0;
-  line-height: 1.1;
+  margin: 22px 0 0;
+  line-height: 1.05;
 }
 .splash .cta-row {
   margin-top: 34px;
@@ -483,21 +483,41 @@ select {
 }
 select {
   appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, rgba(244, 250, 252, 0.55) 50%),
-    linear-gradient(135deg, rgba(244, 250, 252, 0.55) 50%, transparent 50%);
-  background-position: calc(100% - 12px) 18px, calc(100% - 7px) 18px;
-  background-size: 5px 5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 28px;
+  cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--brass-hi) 50%),
+    linear-gradient(135deg, var(--brass-hi) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 19px, calc(100% - 8px) 19px;
+  background-size: 6px 6px;
   background-repeat: no-repeat;
-  padding-right: 24px;
+  transition: background-image 120ms ease;
 }
-select option {
-  background: var(--oak);
+select:hover {
+  background-image: linear-gradient(45deg, transparent 50%, var(--salt) 50%),
+    linear-gradient(135deg, var(--salt) 50%, transparent 50%);
+}
+select option,
+select optgroup {
+  background: #0d1720;
   color: var(--salt);
+  font-family: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  padding: 12px 14px;
+}
+select option:checked {
+  background: linear-gradient(0deg, rgba(176, 141, 87, 0.28), rgba(176, 141, 87, 0.28)), #0d1720;
+  color: var(--salt);
+  font-weight: 500;
 }
 input:focus,
 select:focus {
   outline: none;
   border-bottom-color: var(--brass-hi);
+}
+input::placeholder {
+  color: rgba(244, 250, 252, 0.38);
 }
 input.invalid,
 select.invalid {

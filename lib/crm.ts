@@ -1,10 +1,13 @@
 import type { Lead } from "./types";
 
 /**
- * Posts a lead to BlackOak's internal CRM at studio.blackoak-re.com.
+ * Posts a lead to BlackOak's internal CRM intake at
+ * studio.blackoak-re.com/api/v1/public/intake/leads.
  *
- * Payload shape is provisional — swap this once the CRM endpoint spec is
- * finalized. The rest of the request pipeline does not depend on it.
+ * Payload shape mirrors the working Bashayer landing (bashayer/api/lead.js):
+ * flat { name, phone, email, requirements, source } — extra fields are folded
+ * into `requirements` as a pipe-delimited human-readable string that shows up
+ * as the lead's notes in Studio.
  */
 export async function postLead(lead: Lead): Promise<{ ok: boolean; status: number; body?: string }> {
   const url = process.env.BLACKOAK_CRM_URL;
@@ -14,27 +17,32 @@ export async function postLead(lead: Lead): Promise<{ ok: boolean; status: numbe
     console.warn("[crm] BLACKOAK_CRM_URL not set — skipping CRM post");
     return { ok: false, status: 0, body: "no-crm-url" };
   }
+  if (!token) {
+    console.warn("[crm] BLACKOAK_CRM_TOKEN not set — skipping CRM post");
+    return { ok: false, status: 0, body: "no-crm-token" };
+  }
+
+  const requirements = [
+    `Interested in: ${lead.intent}`,
+    `Arrival: ${lead.arrival}`,
+    `Guests: ${lead.guests}`,
+    "Event: Bayn Open House — 19 September 2026",
+  ].join(" | ");
 
   const payload = {
+    name: lead.fullName,
+    phone: lead.phone,
+    email: lead.email,
+    requirements,
     source: "bayn-open-day-rsvp",
-    event: "bayn-open-house-2026-09-19",
-    submittedAt: new Date().toISOString(),
-    lead: {
-      full_name: lead.fullName,
-      phone: lead.phone,
-      email: lead.email,
-      intent: lead.intent,
-      guests: Number(lead.guests),
-      arrival_slot: lead.arrival,
-    },
   };
 
   try {
     const res = await fetch(url, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(payload),
       cache: "no-store",
