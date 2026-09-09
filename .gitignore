@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+.env
+.env.local
+.env.*.local
+.vercel
+*.log
+.DS_Store
+next-env.d.ts
+
+# large source media (compress + upload to Vimeo instead)
+Open House - Dana.mp4

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bayn Open Day · 19 September 2026 · ORA Developers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#084C61;
+  --tide:#0797B4;
+  --sand:#F3E2C4;
+  --salt:#F4FAFC;
+  --brass:#B08D57;
+  --oak:#1A1A1A;
+  --serif:"Instrument Serif",Georgia,serif;
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --gut:24px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--salt);color:var(--ink);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:1080px;margin:0 auto;padding:0 var(--gut)}
+a{color:inherit}
+::selection{background:var(--brass);color:var(--salt)}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--salt)}
+.nav .container{display:flex;align-items:center;justify-content:space-between;height:56px}
+.nav .lock{font-family:var(--serif);font-size:22px;letter-spacing:.02em}
+.nav .lock span{font-size:11px;font-family:var(--sans);letter-spacing:.2em;opacity:.7;margin-left:10px;text-transform:uppercase}
+.nav .lock em{font-style:normal;font-family:var(--sans);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);margin-left:14px;padding-left:14px;border-left:1px solid rgba(244,250,252,.28)}
+
+/* offer */
+.offer{background:var(--oak);color:var(--salt)}
+.offer h2{color:var(--salt);max-width:20ch}
+.offer .kicker{color:var(--brass)}
+.offer .goldrule{height:1px;background:var(--brass);margin:34px 0 0;opacity:.7}
+.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:0}
+.term{padding:28px 26px 26px 0;border-right:1px solid rgba(244,250,252,.16)}
+.term:last-child{border-right:0;padding-right:0}
+.term b{display:block;font-family:var(--serif);font-size:clamp(28px,4vw,42px);line-height:1.05;color:var(--brass);margin-bottom:10px;font-variant-numeric:tabular-nums}
+.term p{font-size:14.5px;color:rgba(244,250,252,.78);max-width:34ch}
+.offer .note{margin-top:30px;font-size:12.5px;color:rgba(244,250,252,.55);max-width:62ch;border-top:1px solid rgba(244,250,252,.16);padding-top:16px}
+.nav a.cta{font-size:12px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--brass);padding-bottom:3px}
+
+/* hero */
+.hero{position:relative;color:var(--ink);padding:0;overflow:hidden}
+.hero .scene{position:absolute;left:0;right:0;top:0;height:100%;width:100%}
+.hero .container{position:relative;padding-top:76px;padding-bottom:8px}
+.hero .horizon{height:0;margin:44px 0 0}
+.hero h1{font-family:var(--serif);font-size:clamp(44px,9.5vw,104px);line-height:.94;letter-spacing:-.025em;max-width:14ch;color:var(--ink)}
+.hero .ar{font-family:var(--serif);color:#0B5266;font-size:clamp(20px,4vw,34px);margin-top:14px}
+.hero .stand{max-width:46ch;color:#0B5266;margin-top:26px;font-size:17px}
+.hero .base{background:var(--sand);color:var(--ink);position:relative}
+.hero .base .container{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding-top:26px;padding-bottom:26px}
+.fact b{display:block;font-family:var(--serif);font-size:clamp(24px,3.4vw,34px);line-height:1.1;font-variant-numeric:tabular-nums}
+.fact span{font-size:12px;letter-spacing:.08em;color:#17677D}
+
+/* sections */
+section{padding:76px 0}
+.kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tide);margin-bottom:18px}
+h2{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1.06;letter-spacing:-.02em;max-width:18ch}
+.body{max-width:60ch;margin-top:20px;color:#0E5871}
+.body p + p{margin-top:14px}
+
+/* schedule */
+.sched{background:var(--sand)}
+.slot{display:grid;grid-template-columns:110px 1fr;gap:20px;padding:18px 0;border-top:1px solid rgba(8,76,97,.18)}
+.slot:last-child{border-bottom:1px solid rgba(8,76,97,.18)}
+.slot time{font-variant-numeric:tabular-nums;font-weight:500;letter-spacing:.02em}
+.slot p{font-size:15px;color:#0E5871;max-width:52ch}
+.slot h3{font-family:var(--sans);font-size:16px;font-weight:600;margin-bottom:2px}
+
+/* getting there */
+.travel{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.travel .opt{border-top:1px solid rgba(8,76,97,.2);padding-top:18px}
+.travel h3{font-family:var(--serif);font-size:26px;font-weight:400;margin-bottom:8px}
+
+/* form */
+.rsvp{background:var(--ink);color:var(--salt)}
+.rsvp h2{color:var(--salt)}
+.rsvp .body{color:rgba(244,250,252,.75)}
+.form{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:22px 26px;max-width:760px}
+.field{display:flex;flex-direction:column}
+.field.full{grid-column:1/-1}
+label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,250,252,.62);margin-bottom:8px}
+input,select{background:transparent;border:0;border-bottom:1px solid rgba(244,250,252,.35);color:var(--salt);font-family:var(--sans);font-size:16px;padding:8px 0;border-radius:0}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,rgba(244,250,252,.6) 50%),linear-gradient(135deg,rgba(244,250,252,.6) 50%,transparent 50%);background-position:calc(100% - 12px) 18px,calc(100% - 7px) 18px;background-size:5px 5px;background-repeat:no-repeat}
+select option{background:var(--ink);color:var(--salt)}
+input:focus,select:focus{outline:none;border-bottom-color:var(--brass)}
+.btn{grid-column:1/-1;justify-self:start;margin-top:10px;background:var(--brass);color:#06323F;border:0;font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.16em;text-transform:uppercase;padding:16px 34px;cursor:pointer;border-radius:1px}
+.btn:hover{background:#B08F5E}
+.fineprint{grid-column:1/-1;font-size:12.5px;color:rgba(244,250,252,.55);max-width:52ch}
+.confirm{margin-top:36px;border:1px solid rgba(244,250,252,.3);padding:32px;max-width:560px}
+.confirm h3{font-family:var(--serif);font-size:30px;font-weight:400;margin-bottom:10px}
+.confirm p{color:rgba(244,250,252,.78);font-size:15px}
+.hide{display:none}
+
+/* footer */
+footer{background:var(--sand);padding:34px 0;font-size:12.5px;color:#17677D}
+footer .container{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media(max-width:820px){
+  .terms{grid-template-columns:1fr}
+  .term{border-right:0;border-bottom:1px solid rgba(244,250,252,.16);padding:22px 0}
+  .term:last-child{border-bottom:0}
+  .nav .lock em{display:none}
+  .hero .base .container{grid-template-columns:1fr 1fr}
+  .travel{grid-template-columns:1fr;gap:32px}
+  .form{grid-template-columns:1fr}
+  section{padding:56px 0}
+  .slot{grid-template-columns:76px 1fr;gap:14px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="container">
+    <div class="lock">BAYN <span>Open Day</span><em>Hosted by BlackOak Real Estate</em></div>
+    <a class="cta" href="#rsvp">Reserve a place</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="hsky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#22B4EE"/><stop offset=".45" stop-color="#6FD1F3"/>
+          <stop offset=".82" stop-color="#BCE6F7"/><stop offset="1" stop-color="#EAF7FB"/>
+        </linearGradient>
+        <linearGradient id="hsea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0FA3C6"/><stop offset=".5" stop-color="#16C4D9"/>
+          <stop offset="1" stop-color="#8CDFE6"/>
+        </linearGradient>
+      </defs>
+      <rect width="1200" height="470" fill="url(#hsky)"/>
+      <rect y="470" width="1200" height="190" fill="url(#hsea)"/>
+      <rect y="466" width="1200" height="8" fill="#FFFFFF" opacity=".95"/>
+      <g stroke="#FFFFFF" stroke-opacity=".28" stroke-width="2" stroke-linecap="round">
+        <line x1="70" y1="512" x2="320" y2="512"/><line x1="600" y1="504" x2="820" y2="504"/>
+        <line x1="260" y1="556" x2="640" y2="556"/><line x1="820" y1="586" x2="1120" y2="586"/>
+      </g>
+      <path d="M0 640 Q 300 618 600 642 T 1200 632 L1200 700 L0 700 Z" fill="#FFFFFF" opacity=".92"/>
+    </svg>
+  <div class="container">
+    <h1>One Saturday between two cities.</h1>
+    <div class="ar">بين</div>
+    <p class="stand">For five hours at the ORA Sales Centre in Dubai, the whole of Bayn is in one room. The masterplan model, the first release of 464 homes, and terms that apply only to buyers who reserve before the doors close.</p>
+    <div class="horizon"></div>
+  </div>
+  <div class="base">
+    <div class="container">
+      <div class="fact"><b>19.09</b><span>Saturday, 2026</span></div>
+      <div class="fact"><b>11 to 16</b><span>Five hours only</span></div>
+      <div class="fact"><b>1.2km</b><span>Gulf beachfront</span></div>
+      <div class="fact"><b>2028</b><span>First handover</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="kicker">What Bayn is</div>
+    <h2>4.8 million square metres of coast that belongs to neither city.</h2>
+    <div class="body">
+      <p>Ghantoot sits on the border, on the last stretch of undeveloped beachfront in the Dubai to Abu Dhabi corridor. ORA's first UAE project takes 4.8 million sqm of it and gives more than half back as open space: a million square metres of parks, seven kilometres of waterfront, a marina, lagoons and a 100,000 sqm sports club.</p>
+      <p>The first release is 464 homes across two gated clusters, three to five bedrooms, ten typologies, handover in 2028. Launch day pricing and allocation apply to the open house only.</p>
+    </div>
+  </div>
+</section>
+
+<section class="offer">
+  <div class="container">
+    <div class="kicker">Launch day only</div>
+    <h2>What you get if you buy in the room.</h2>
+    <div class="body" style="color:rgba(244,250,252,.75)">
+      <p>BlackOak and ORA are releasing terms on 19 September that apply to reservations placed before 16:00 on the day. They do not carry over to Sunday.</p>
+    </div>
+    <div class="goldrule"></div>
+    <div class="terms">
+      <div class="term"><b>[4%]</b><p>[Registration fee covered on any first release unit reserved on the day.]</p></div>
+      <div class="term"><b>[3 years]</b><p>[Service charges waived from handover, applied at the point of contract.]</p></div>
+      <div class="term"><b>[First pick]</b><p>[Plot and typology selection ahead of the general release, by arrival slot.]</p></div>
+    </div>
+    <p class="note">[Placeholder terms. Replace with the agreed ORA and BlackOak offer before publishing.] Reservation requires a deposit on the day. Full terms are confirmed in writing at the point of booking. Subject to availability.</p>
+  </div>
+</section>
+
+<section class="sched">
+  <div class="container">
+    <div class="kicker">Saturday 19 September</div>
+    <h2>The five hours, hour by hour.</h2>
+    <div style="margin-top:34px">
+      <div class="slot"><time>11:00</time><div><h3>Doors open</h3><p>Refreshments, the Bayn masterplan model and the typology displays for the first release.</p></div></div>
+      <div class="slot"><time>12:00</time><div><h3>Masterplan presentation</h3><p>The ORA team on Ghantoot, phasing, infrastructure and what the corridor looks like by 2028.</p></div></div>
+      <div class="slot"><time>13:30</time><div><h3>Second presentation</h3><p>Repeat session for afternoon arrivals, followed by the shoreline and marina film.</p></div></div>
+      <div class="slot"><time>15:00</time><div><h3>Final presentation</h3><p>Last guided session of the day.</p></div></div>
+      <div class="slot"><time>15:00 to 16:00</time><div><h3>Unit selection</h3><p>Plot selection and reservations with the BlackOak team. Launch day terms close at 16:00.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="kicker">Where</div>
+    <h2>ORA Sales Centre, Dubai.</h2>
+    <div class="travel" style="margin-top:34px">
+      <div class="opt">
+        <h3>The address</h3>
+        <p style="font-size:15px;color:#0E5871">[ORA Sales Centre, full address, Dubai]. A location pin goes out with your confirmation on Friday 18 September.</p>
+      </div>
+      <div class="opt">
+        <h3>Parking</h3>
+        <p style="font-size:15px;color:#0E5871">Valet parking is available at the entrance for the duration of the event. Come at the time you booked and we will have someone waiting for you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rsvp" id="rsvp">
+  <div class="container">
+    <div class="kicker" style="color:var(--brass)">Registration</div>
+    <h2>Reserve a place.</h2>
+    <div class="body"><p>Attendance is by registration and places in each arrival slot are limited. We confirm every guest by WhatsApp on Friday 18 September with the location pin and your time.</p></div>
+
+    <div class="form" id="form">
+      <div class="field"><label for="fn">Full name</label><input id="fn" type="text" autocomplete="name" placeholder="Your name"></div>
+      <div class="field"><label for="ph">Mobile with country code</label><input id="ph" type="tel" autocomplete="tel" placeholder="+971 50 000 0000"></div>
+      <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="field"><label for="na">Nationality</label><input id="na" type="text" placeholder="Nationality"></div>
+      <div class="field"><label for="in">What brings you</label>
+        <select id="in">
+          <option>Buying a home to live in</option>
+          <option>Buying as an investment</option>
+          <option>Still exploring</option>
+          <option>Broker or partner</option>
+        </select>
+      </div>
+      <div class="field"><label for="bd">Home size of interest</label>
+        <select id="bd">
+          <option>3 bedroom</option>
+          <option>4 bedroom</option>
+          <option>5 bedroom</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="field"><label for="gs">Guests including you</label>
+        <select id="gs"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+      </div>
+      <div class="field"><label for="tr">Arrival time</label>
+        <select id="tr">
+          <option>11:00 to 12:00</option>
+          <option>12:00 to 13:30, with the masterplan presentation</option>
+          <option>13:30 to 15:00, with the second presentation</option>
+          <option>15:00 to 16:00, with the final presentation</option>
+        </select>
+      </div>
+      <button class="btn" id="submit" type="button">Reserve my place</button>
+      <p class="fineprint">By registering you agree to be contacted by BlackOak Real Estate about Bayn. Marketed in partnership with ORA Developers.</p>
+    </div>
+
+    <div class="confirm hide" id="confirm">
+      <h3>You are on the list.</h3>
+      <p>We will WhatsApp your confirmation on Friday 18 September with the location pin and your arrival time. If your plans change, reply to that message and we will hold a private viewing for you instead.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div>Bayn by ORA Developers · ORA Sales Centre, Dubai</div>
+    <div>Hosted by BlackOak Real Estate</div>
+  </div>
+</footer>
+
+<script>
+document.getElementById('submit').addEventListener('click',function(){
+  var name=document.getElementById('fn').value.trim();
+  var phone=document.getElementById('ph').value.trim();
+  if(!name||!phone){
+    var missing=!name?'fn':'ph';
+    var el=document.getElementById(missing);
+    el.style.borderBottomColor='#E2574C';
+    el.focus();
+    return;
+  }
+  document.getElementById('form').classList.add('hide');
+  document.getElementById('confirm').classList.remove('hide');
+  document.getElementById('confirm').scrollIntoView({block:'center'});
+});
+</script>
+</body>
+</html>
