@@ -1,7 +1,7 @@
 import type { Lead } from "./types";
 
 /**
- * Posts a lead to BlackOak's internal CRM intake at
+ * Posts to BlackOak's internal CRM intake at
  * studio.blackoak-re.com/api/v1/public/intake/leads.
  *
  * Payload shape mirrors the working Bashayer landing (bashayer/api/lead.js):
@@ -9,7 +9,16 @@ import type { Lead } from "./types";
  * into `requirements` as a pipe-delimited human-readable string that shows up
  * as the lead's notes in Studio.
  */
-export async function postLead(lead: Lead): Promise<{ ok: boolean; status: number; body?: string }> {
+
+interface CrmPayload {
+  name: string;
+  phone: string;
+  email: string;
+  requirements: string;
+  source: string;
+}
+
+async function postToCrm(payload: CrmPayload): Promise<{ ok: boolean; status: number; body?: string }> {
   const url = process.env.BLACKOAK_CRM_URL;
   const token = process.env.BLACKOAK_CRM_TOKEN;
 
@@ -21,21 +30,6 @@ export async function postLead(lead: Lead): Promise<{ ok: boolean; status: numbe
     console.warn("[crm] BLACKOAK_CRM_TOKEN not set — skipping CRM post");
     return { ok: false, status: 0, body: "no-crm-token" };
   }
-
-  const requirements = [
-    `Interested in: ${lead.intent}`,
-    `Arrival: ${lead.arrival}`,
-    `Guests: ${lead.guests}`,
-    "Event: Bayn Open House — 19 September 2026",
-  ].join(" | ");
-
-  const payload = {
-    name: lead.fullName,
-    phone: lead.phone,
-    email: lead.email,
-    requirements,
-    source: "bayn-open-day-rsvp",
-  };
 
   try {
     const res = await fetch(url, {
@@ -57,4 +51,53 @@ export async function postLead(lead: Lead): Promise<{ ok: boolean; status: numbe
     console.error("[crm] fetch failed", err);
     return { ok: false, status: 0, body: String(err) };
   }
+}
+
+/** RSVP form on /rsvp — full details, triggers email + ICS. */
+export async function postLead(lead: Lead) {
+  const requirements = [
+    `Interested in: ${lead.intent}`,
+    `Arrival: ${lead.arrival}`,
+    `Guests: ${lead.guests}`,
+    "Event: Bayn Open House — 19th September 2026",
+  ].join(" | ");
+
+  return postToCrm({
+    name: lead.fullName,
+    phone: lead.phone,
+    email: lead.email,
+    requirements,
+    source: "bayn-open-day-rsvp",
+  });
+}
+
+/** Invitation form on /invitation — no email captured, no calendar invite sent. */
+export interface InvitationLead {
+  name: string;
+  phone: string;
+  look: string;
+  guests: string;
+  envelope: string;
+}
+
+export async function postInvitationLead(lead: InvitationLead) {
+  const requirements = [
+    `Interested in: ${lead.look}`,
+    `Guests: ${lead.guests}`,
+    `Envelope: ${lead.envelope}`,
+    "Event: Bayn Open House — 19th September (Invitation)",
+  ].join(" | ");
+
+  // No email is captured on the invitation form. The CRM's `email` field is
+  // required for uniqueness, so we synthesize a namespaced placeholder from
+  // the envelope number. Follow-up is via WhatsApp, not email.
+  const envelopeDigits = lead.envelope.replace(/\D/g, "") || "0";
+
+  return postToCrm({
+    name: lead.name,
+    phone: lead.phone,
+    email: `envelope-${envelopeDigits}@invitation.blackoak-re.com`,
+    requirements,
+    source: "bayn-open-day-invitation",
+  });
 }
