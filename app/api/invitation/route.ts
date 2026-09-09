@@ -9,7 +9,6 @@ const LeadSchema = z.object({
   phone: z.string().trim().min(6, "Phone is required"),
   look: z.string().trim().min(1, "Please pick what you're here for"),
   guests: z.string().trim().min(1, "Guests is required"),
-  envelope: z.string().trim().min(1, "Envelope is required"),
 });
 
 /**

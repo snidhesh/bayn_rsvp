@@ -77,26 +77,25 @@ export interface InvitationLead {
   phone: string;
   look: string;
   guests: string;
-  envelope: string;
 }
 
 export async function postInvitationLead(lead: InvitationLead) {
   const requirements = [
     `Interested in: ${lead.look}`,
     `Guests: ${lead.guests}`,
-    `Envelope: ${lead.envelope}`,
     "Event: Bayn Open House — 19th September (Invitation)",
   ].join(" | ");
 
   // No email is captured on the invitation form. The CRM's `email` field is
   // required for uniqueness, so we synthesize a namespaced placeholder from
-  // the envelope number. Follow-up is via WhatsApp, not email.
-  const envelopeDigits = lead.envelope.replace(/\D/g, "") || "0";
+  // the phone digits — this also gives natural deduplication if a guest
+  // submits twice. Follow-up is via WhatsApp, not email.
+  const phoneKey = lead.phone.replace(/\D/g, "") || "unknown";
 
   return postToCrm({
     name: lead.name,
     phone: lead.phone,
-    email: `envelope-${envelopeDigits}@invitation.blackoak-re.com`,
+    email: `wa-${phoneKey}@invitation.blackoak-re.com`,
     requirements,
     source: "bayn-open-day-invitation",
   });
