@@ -95,6 +95,8 @@
   .itin-k{font-family:var(--caps);font-size:11.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
   .itin-v{font-family:var(--serif);font-size:clamp(20px,2.4vw,24px);font-weight:400;line-height:1.25;color:var(--ink);letter-spacing:.005em}
   .itin-v i{font-style:italic;color:var(--mute);font-size:.85em;margin-left:6px}
+  .itin-map{display:inline-block;margin-top:10px;font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,169,118,.42);padding-bottom:3px;transition:color .2s ease,border-color .2s ease}
+  .itin-map:hover{color:var(--gold-hi);border-bottom-color:var(--gold-hi)}
 
   /* offer panel — the sealed moment of the invitation */
   .offer-panel{position:relative;margin:64px auto 8px;max-width:520px;padding:48px clamp(28px,4vw,44px);
@@ -150,6 +152,9 @@
   .f select option{background:#0f0b07;color:var(--ink);font-family:var(--sans);font-size:15px;padding:12px}
   .f label{position:absolute;left:0;top:14px;font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);pointer-events:none;transition:all .25s ease}
   .f input:focus,.f select:focus{border-bottom-color:var(--gold-hi)}
+  .f input:not(:placeholder-shown):invalid{border-bottom-color:#c96060}
+  .f.err input{border-bottom-color:#c96060}
+  .f-error{margin-top:8px;font-family:var(--sans);font-size:11px;letter-spacing:.06em;color:#c96060}
   .f input:focus+label,.f input:not(:placeholder-shown)+label,.f select:focus+label,.f select:valid+label{top:-14px;font-size:10px;letter-spacing:.32em;color:var(--gold)}
   /* invalid selects (no value picked yet) get a subtle brass hint on the border */
   .f select:required:invalid{color:var(--dim)}
@@ -163,6 +168,25 @@
   .go:disabled{opacity:.4;cursor:default}
   .go .orn{display:inline-block;width:6px;height:6px;background:currentColor;transform:rotate(45deg);opacity:.5}
   .note{margin-top:18px;text-align:center;font-family:var(--sans);font-size:11.5px;letter-spacing:.14em;color:var(--dim);font-weight:400}
+
+  /* ---------- reveal (post-submit video) ---------- */
+  .reveal{position:relative;width:min(340px,78vw);aspect-ratio:9/16;margin:36px auto 4px;background:#000;overflow:hidden;border:1px solid var(--gold);
+    box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 60px rgba(232,207,153,.08), inset 0 0 60px rgba(0,0,0,.35)}
+  .reveal-frame,.reveal iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .reveal::before,.reveal::after{content:"";position:absolute;width:14px;height:14px;border:1px solid var(--gold);pointer-events:none;z-index:2}
+  .reveal::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+  .reveal::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+  .reveal .tick-tr,.reveal .tick-bl{position:absolute;width:14px;height:14px;border:1px solid var(--gold);pointer-events:none;z-index:2}
+  .reveal .tick-tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
+  .reveal .tick-bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
+
+  /* ---------- done state — hide everything except the confirmation panel ---------- */
+  .wrap.done .seal,
+  .wrap.done .card,
+  .wrap.done .reel-heading,
+  .wrap.done .reel,
+  .wrap.done #form,
+  .wrap.done .foot{display:none}
 
   /* ---------- confirmation ---------- */
   #confirm{display:none;text-align:center;padding:64px 0 40px}
@@ -227,10 +251,8 @@
 
     <!-- card -->
     <div class="card">
-      <p class="lede">You don't get many days like this in Dubai. One day, one price, and it doesn't come back.</p>
-
       <img class="bayn-mark" src="bayn-logo-web-white.png" alt="Bayn by ORA">
-      <div class="bayn-sub">An Open House</div>
+      <div class="bayn-sub">An Exclusive Event</div>
 
       <!-- formal itinerary -->
       <div class="itin">
@@ -244,7 +266,11 @@
         </div>
         <div class="itin-row">
           <div class="itin-k">The Address</div>
-          <div class="itin-v">Ora Sales Center<br><span style="color:var(--mute);font-size:.85em">Jumeirah 3, Dubai</span></div>
+          <div class="itin-v">
+            Ora Sales Center<br>
+            <span style="color:var(--mute);font-size:.85em">Jumeirah 3, Dubai</span>
+            <a class="itin-map" href="https://maps.app.goo.gl/d9ZtYm3hXjHPRweV6" target="_blank" rel="noopener noreferrer">View on map →</a>
+          </div>
         </div>
       </div>
 
@@ -285,7 +311,7 @@
       <div class="fieldset-label">Reserve your place</div>
 
       <div class="f"><input id="name" type="text" placeholder=" " autocomplete="name" required><label for="name">Your name</label></div>
-      <div class="f"><input id="phone" type="tel" placeholder=" " autocomplete="tel" required><label for="phone">WhatsApp number</label></div>
+      <div class="f"><input id="phone" type="tel" placeholder=" " autocomplete="tel" inputmode="tel" pattern="[+\d\s\-()]{7,20}" title="Enter a valid phone number (digits, spaces, +, -, ( ) only)" required><label for="phone">WhatsApp number</label></div>
       <div class="f">
         <select id="look" required>
           <option value="" disabled selected></option>
@@ -311,6 +337,11 @@
     <div id="confirm">
       <div class="sm">Confirmed</div>
       <h2 class="conf-head" id="confhead">You are added to the list.</h2>
+      <div class="reveal" id="reveal" aria-hidden="true">
+        <span class="tick-tr"></span>
+        <span class="tick-bl"></span>
+        <div class="reveal-frame" id="revealFrame"><!-- Vimeo iframe injected here on submit --></div>
+      </div>
       <a id="wa" href="#" target="_blank" rel="noopener">Confirm on WhatsApp</a>
     </div>
 
@@ -336,6 +367,16 @@ document.getElementById('rsvp').addEventListener('click',()=>{
   sea.classList.add('gone');
 });
 
+/* ---------- reveal video pool ----------
+   Each successful RSVP shows one video picked at random from this list.
+   Two guests submitting side-by-side will see different videos, creating
+   an individual reveal moment. Add more Vimeo IDs as they arrive — the
+   more IDs, the lower the collision rate.
+*/
+const REVEAL_VIDEOS=[
+  '1225189972',   // placeholder — replace / add more when the reveal reel URLs come in
+];
+
 /* ---------- form → CRM → confirmation ---------- */
 const wa=getComputedStyle(document.documentElement).getPropertyValue('--wa').trim().replace(/^"|"$/g,'');
 document.getElementById('form').addEventListener('submit',async e=>{
@@ -345,8 +386,26 @@ document.getElementById('form').addEventListener('submit',async e=>{
         look=document.getElementById('look').value,
         guestsVal=document.getElementById('guests').value,
         guests=guestsVal?document.getElementById('guests').selectedOptions[0].text:'';
+
+  // clear any previous phone error state
+  const phoneField=document.getElementById('phone').parentElement;
+  phoneField.classList.remove('err');
+  phoneField.querySelector('.f-error')?.remove();
+
   if(!name||!phone||!look||!guestsVal){
     [['name',name],['phone',phone],['look',look],['guests',guestsVal]].forEach(([id,v])=>{if(!v){document.getElementById(id).focus();return}});
+    return;
+  }
+
+  // phone must contain 7–15 digits (E.164 range), letters and other symbols rejected
+  const phoneDigits=phone.replace(/\D/g,'');
+  if(phoneDigits.length<7||phoneDigits.length>15||/[a-zA-Z]/.test(phone)){
+    phoneField.classList.add('err');
+    const err=document.createElement('div');
+    err.className='f-error';
+    err.textContent='Please enter a valid phone number';
+    phoneField.appendChild(err);
+    document.getElementById('phone').focus();
     return;
   }
   const submit=document.getElementById('submit');
@@ -370,11 +429,23 @@ document.getElementById('form').addEventListener('submit',async e=>{
   document.getElementById('confhead').textContent=`${first}, you are added to the list.`;
   const msg=`Hi Bayn team, I am confirming for the Bayn Open House on Saturday 19th September.\nName: ${name}\nLooking at: ${look}\nComing with: ${guests}`;
   document.getElementById('wa').href=`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
-  document.getElementById('form').style.display='none';
   submit.disabled=false;
   submit.innerHTML=originalHtml;
+
+  // Pick a random reveal video for this guest.
+  const vid=REVEAL_VIDEOS[Math.floor(Math.random()*REVEAL_VIDEOS.length)];
+  const frame=document.getElementById('revealFrame');
+  const iframe=document.createElement('iframe');
+  iframe.src=`https://player.vimeo.com/video/${vid}?autoplay=1&muted=1&title=0&byline=0&portrait=0&dnt=1`;
+  iframe.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
+  iframe.setAttribute('allowfullscreen','');
+  iframe.setAttribute('title','A message for you');
+  frame.appendChild(iframe);
+
+  // Collapse the pre-submission content and reveal the confirmation panel.
+  document.querySelector('.wrap').classList.add('done');
   const cf=document.getElementById('confirm');cf.classList.add('on');
-  cf.scrollIntoView({behavior:'smooth',block:'center'});
+  window.scrollTo({top:0,behavior:'smooth'});
 });
 </script>
 </body>

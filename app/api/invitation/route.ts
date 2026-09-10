@@ -6,7 +6,17 @@ export const runtime = "nodejs";
 
 const LeadSchema = z.object({
   name: z.string().trim().min(2, "Name is required"),
-  phone: z.string().trim().min(6, "Phone is required"),
+  phone: z
+    .string()
+    .trim()
+    .refine(
+      (v) => {
+        if (/[a-zA-Z]/.test(v)) return false;
+        const digits = v.replace(/\D/g, "");
+        return digits.length >= 7 && digits.length <= 15;
+      },
+      "Please enter a valid phone number"
+    ),
   look: z.string().trim().min(1, "Please pick what you're here for"),
   guests: z.string().trim().min(1, "Guests is required"),
 });

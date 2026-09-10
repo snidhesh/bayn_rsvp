@@ -1,24 +1,34 @@
-# Bayn by ORA — Open Day RSVP
+# Bayn — By Private Invitation
 
-Standalone landing page for the **Bayn by ORA Open House**, Saturday **19 September 2026, 11:00–16:00 GST**, ORA Sales Centre, Dubai. Hosted by BlackOak Real Estate.
+Standalone invitation page for the Bayn by ORA Open House, **Saturday 19th September, 11 AM – 4 PM, ORA Sales Center, Jumeirah 3, Dubai**. Hosted by BlackOak Real Estate.
 
-- Splash screen with the cinematic hero banner (`/public/hero_spash_banner.mp4`) and a single **Reserve your place** CTA.
-- Two-column RSVP page — form left (dark), Vimeo film right — modeled on the Tim Allen buyer's-guide reference.
-- On submit: POSTs the lead to the internal **studio.blackoak-re.com** CRM, then emails the guest a confirmation with an **`.ics` calendar invite** attached (Apple / Google / Outlook — one tap to add).
+- Cinematic splash: hero video + gold RSVP disc, no reveal until the disc is clicked.
+- Slide-up invitation sheet: Bayn logo, itinerary, gold-framed sealed offer, portrait reel, form.
+- Form submits to studio.blackoak-re.com; each guest gets a randomised Vimeo reveal + WhatsApp confirm button.
+- **No email, no calendar invite** — WhatsApp is the confirmation channel by design.
+
+## Where the page lives
+
+- **Locally:** `http://localhost:3002/`
+- **Production:** `https://baynrsvp.vercel.app/baynopenhouse/` (Vercel), reverse-proxied to `https://www.blackoak-re.com/baynopenhouse/` via a rewrite in `blackoak-website/next.config.mjs`.
+
+The whole page is a single self-contained file at `public/invitation.html`. Next.js only hosts:
+- The rewrite `/` → `/invitation.html` (see `next.config.ts`)
+- One API route: `POST /api/invitation` → validates + posts to CRM
 
 ## Stack
 
-- Next.js 15 App Router · TypeScript · React 19
-- [`resend`](https://resend.com) for transactional email
-- [`ics`](https://www.npmjs.com/package/ics) for calendar generation
-- Deploys as a single Vercel project
+- Next.js 15 App Router · TypeScript · React 19 (used only for the API route + layout wrapper)
+- Zod for the intake validator
+- Fonts loaded by the HTML directly (Playfair Display · Cinzel · Inter — Google Fonts)
 
 ## Local development
 
 ```bash
-npm install                 # or pnpm install
-cp .env.local.example .env.local   # fill in the values below
-npm run dev                 # http://localhost:3000
+npm install
+cp .env.local.example .env.local   # fill in CRM URL + token
+npm run dev
+# open http://localhost:3002/  (or whichever port Next picks)
 ```
 
 ## Environment variables
@@ -27,54 +37,42 @@ npm run dev                 # http://localhost:3000
 |---|---|
 | `BLACKOAK_CRM_URL` | Lead intake endpoint on `studio.blackoak-re.com` |
 | `BLACKOAK_CRM_TOKEN` | Bearer token for the CRM |
-| `RESEND_API_KEY` | Resend API key (transactional sender) |
-| `RESEND_FROM` | e.g. `Bayn Open Day <openday@blackoak-re.com>` — domain must be verified in Resend |
-| `RSVP_BCC` | (optional) internal inbox that gets a BCC of every confirmation |
-| `NEXT_PUBLIC_DANA_VIMEO_ID` | Numeric Vimeo ID for the "Open House - Dana" film |
+| `NEXT_PUBLIC_BASE_PATH` | Set to `/baynopenhouse` in Vercel Production + Preview so the app serves under the parent site's proxy path. Leave blank for local dev. |
 
-## Pre-launch checklist
+## Adding more reveal videos
 
-1. **Vimeo** — upload `Open House - Dana.mp4` as **unlisted**, copy the numeric ID into `NEXT_PUBLIC_DANA_VIMEO_ID`. The 115 MB source cannot be shipped through Vercel's per-file limit — Vimeo also gives us a chrome-free player.
-2. **Resend** — verify the sender domain (`blackoak-re.com` or equivalent). Add the API key to Vercel.
-3. **CRM** — paste the studio.blackoak-re.com endpoint spec; adjust the payload in `lib/crm.ts` to match. The rest of the pipeline is decoupled.
-4. **Poster frame (optional)** — export a still from `hero_spash_banner.mp4` to `/public/poster.jpg` so the splash has an instant paint on slow connections.
-5. **Custom domain** — assign e.g. `openday.blackoak-re.com` in Vercel and update `EVENT.url` in `lib/event.ts` if the ICS should point at the live URL.
+The invitation randomly picks a Vimeo video from a pool on each successful RSVP so two guests sitting side-by-side see different reveals. Add IDs to the array at the top of the `<script>` block in `public/invitation.html`:
 
-## Deploy to Vercel
-
-```bash
-npx vercel               # link the project once
-npx vercel --prod        # ship
+```js
+const REVEAL_VIDEOS = [
+  '1225189972',
+  // paste more Vimeo numeric IDs here
+];
 ```
 
-Set the environment variables in **Project → Settings → Environment Variables** (Production + Preview).
+More IDs = lower collision rate. 5+ videos gets you under 4% collision for the first 10 guests.
 
-## Smoke-test end-to-end
+## Deploy
 
-1. Visit `/` — splash video should autoplay muted; CTA scrolls to `/rsvp`.
-2. Submit the form with your own email.
-3. Confirm within ~30s:
-   - Confirmation email arrives with `bayn-open-house.ics`.
-   - Opening the ICS on iOS/macOS/Android/Outlook creates an event **Sat 19 Sep 2026, 11:00–16:00 (Asia/Dubai)** at ORA Sales Centre.
-   - The lead appears in studio.blackoak-re.com.
+```bash
+git push origin main   # Vercel auto-deploys baynrsvp.vercel.app
+```
+
+For the parent site (`blackoak-website`), the rewrite proxying `/baynopenhouse/*` → `https://baynrsvp.vercel.app/baynopenhouse/*` is already in place (see `blackoak-website/next.config.mjs`). Once bayn_rsvp is deployed, `www.blackoak-re.com/baynopenhouse/` resolves through it.
 
 ## File map
 
 ```
 app/
-  page.tsx              splash
-  rsvp/page.tsx         form + video
-  thanks/page.tsx       post-submit confirmation
-  api/rsvp/route.ts     validate → CRM → email + ICS
-components/
-  SplashHero.tsx        <video> + CTA
-  RsvpForm.tsx          controlled form
+  layout.tsx                Next 15 root layout (minimal — needed for API route)
+  api/invitation/route.ts   POST → validate → post to CRM
 lib/
-  event.ts              single source of truth for the event
-  ics.ts                buildIcs(lead)
-  crm.ts                postLead(lead)
-  email.ts              sendConfirmation(lead, ics)
-  types.ts              Lead
+  crm.ts                    postInvitationLead() — flat payload to studio.blackoak-re.com
 public/
-  hero_spash_banner.mp4
+  invitation.html           the whole page (styles + scripts inline)
+  hero_spash_banner.mp4     shared background video
+  costal_views.mp4          pre-submit portrait reel
+  bayn-logo-web-white.png   Bayn wordmark
+  blackoak-logo-2k.png      BlackOak wordmark for the footer
+next.config.ts              rewrite `/` → `/invitation.html`, optional basePath
 ```

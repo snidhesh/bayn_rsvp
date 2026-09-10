@@ -1,5 +1,3 @@
-import type { Lead } from "./types";
-
 /**
  * Posts to BlackOak's internal CRM intake at
  * studio.blackoak-re.com/api/v1/public/intake/leads.
@@ -53,25 +51,7 @@ async function postToCrm(payload: CrmPayload): Promise<{ ok: boolean; status: nu
   }
 }
 
-/** RSVP form on /rsvp — full details, triggers email + ICS. */
-export async function postLead(lead: Lead) {
-  const requirements = [
-    `Interested in: ${lead.intent}`,
-    `Arrival: ${lead.arrival}`,
-    `Guests: ${lead.guests}`,
-    "Event: Bayn Open House — 19th September 2026",
-  ].join(" | ");
-
-  return postToCrm({
-    name: lead.fullName,
-    phone: lead.phone,
-    email: lead.email,
-    requirements,
-    source: "bayn-open-day-rsvp",
-  });
-}
-
-/** Invitation form on /invitation — no email captured, no calendar invite sent. */
+/** Invitation form (public/invitation.html) — no email captured, no calendar invite sent. */
 export interface InvitationLead {
   name: string;
   phone: string;
