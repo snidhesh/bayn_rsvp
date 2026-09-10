@@ -51,10 +51,11 @@ async function postToCrm(payload: CrmPayload): Promise<{ ok: boolean; status: nu
   }
 }
 
-/** Invitation form (public/invitation.html) — no email captured, no calendar invite sent. */
+/** Invitation form (public/invitation.html) — real email captured; no calendar invite is sent. */
 export interface InvitationLead {
   name: string;
   phone: string;
+  email: string;
   look: string;
   guests: string;
 }
@@ -66,16 +67,10 @@ export async function postInvitationLead(lead: InvitationLead) {
     "Event: Bayn Open House — 19th September (Invitation)",
   ].join(" | ");
 
-  // No email is captured on the invitation form. The CRM's `email` field is
-  // required for uniqueness, so we synthesize a namespaced placeholder from
-  // the phone digits — this also gives natural deduplication if a guest
-  // submits twice. Follow-up is via WhatsApp, not email.
-  const phoneKey = lead.phone.replace(/\D/g, "") || "unknown";
-
   return postToCrm({
     name: lead.name,
     phone: lead.phone,
-    email: `wa-${phoneKey}@invitation.blackoak-re.com`,
+    email: lead.email,
     requirements,
     source: "bayn-open-day-invitation",
   });

@@ -346,6 +346,7 @@
 
       <div class="f"><input id="name" type="text" placeholder=" " autocomplete="name" required><label for="name">Your name</label></div>
       <div class="f"><input id="phone" type="tel" placeholder=" " autocomplete="tel" inputmode="tel" pattern="[+\d\s\-()]{7,20}" title="Enter a valid phone number (digits, spaces, +, -, ( ) only)" required><label for="phone">WhatsApp number</label></div>
+      <div class="f"><input id="email" type="email" placeholder=" " autocomplete="email" inputmode="email" required><label for="email">Email</label></div>
       <div class="f">
         <select id="look" required>
           <option value="" disabled selected></option>
@@ -453,17 +454,18 @@ document.getElementById('form').addEventListener('submit',async e=>{
   e.preventDefault();
   const name=document.getElementById('name').value.trim(),
         phone=document.getElementById('phone').value.trim(),
+        email=document.getElementById('email').value.trim(),
         look=document.getElementById('look').value,
         guestsVal=document.getElementById('guests').value,
         guests=guestsVal?document.getElementById('guests').selectedOptions[0].text:'';
 
-  // clear any previous phone error state
+  // clear any previous field error states
   const phoneField=document.getElementById('phone').parentElement;
-  phoneField.classList.remove('err');
-  phoneField.querySelector('.f-error')?.remove();
+  const emailField=document.getElementById('email').parentElement;
+  [phoneField,emailField].forEach(f=>{f.classList.remove('err');f.querySelector('.f-error')?.remove()});
 
-  if(!name||!phone||!look||!guestsVal){
-    [['name',name],['phone',phone],['look',look],['guests',guestsVal]].forEach(([id,v])=>{if(!v){document.getElementById(id).focus();return}});
+  if(!name||!phone||!email||!look||!guestsVal){
+    [['name',name],['phone',phone],['email',email],['look',look],['guests',guestsVal]].forEach(([id,v])=>{if(!v){document.getElementById(id).focus();return}});
     return;
   }
 
@@ -478,6 +480,18 @@ document.getElementById('form').addEventListener('submit',async e=>{
     document.getElementById('phone').focus();
     return;
   }
+
+  // email must look like a real address
+  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRe.test(email)){
+    emailField.classList.add('err');
+    const err=document.createElement('div');
+    err.className='f-error';
+    err.textContent='Please enter a valid email address';
+    emailField.appendChild(err);
+    document.getElementById('email').focus();
+    return;
+  }
   const submit=document.getElementById('submit');
   const originalHtml=submit.innerHTML;
   submit.disabled=true;
@@ -489,7 +503,7 @@ document.getElementById('form').addEventListener('submit',async e=>{
     await fetch('api/invitation',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,phone,look,guests})
+      body:JSON.stringify({name,phone,email,look,guests})
     });
   }catch(err){
     console.error('CRM submission failed',err);
@@ -497,7 +511,7 @@ document.getElementById('form').addEventListener('submit',async e=>{
 
   const first=name.split(' ')[0];
   document.getElementById('confhead').textContent=`Thank you ${first}. You are added to the list.`;
-  const msg=`Hi Bayn team, I am confirming for the Bayn Open House on Saturday 19th September.\nName: ${name}\nLooking at: ${look}\nComing with: ${guests}`;
+  const msg=`Hi Bayn team, I am confirming for the Bayn Open House on Saturday 19th September.\nName: ${name}\nEmail: ${email}\nLooking at: ${look}\nComing with: ${guests}`;
   document.getElementById('wa').href=`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
   submit.disabled=false;
   submit.innerHTML=originalHtml;
