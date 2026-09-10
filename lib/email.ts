@@ -52,9 +52,6 @@ function renderText(firstName: string): string {
     `The Address Ora Sales Center, Jumeirah 3, Dubai`,
     `Map:        ${MAP_URL}`,
     "",
-    "Exclusive Offer only available on the day. Opens at 11 AM.",
-    "By Invitation Only.",
-    "",
     "Hosted by BlackOak Real Estate",
     "In partnership with ORA Developers · © 2026 BlackOak Real Estate",
   ].join("\n");
@@ -131,16 +128,6 @@ function renderHtml(args: { firstName: string }): string {
               <a href="${MAP_URL}" style="display:inline-block;margin-top:10px;font-family:${sans};font-size:10.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:${gold};text-decoration:none;border-bottom:1px solid ${gold};padding-bottom:3px">View on map &rarr;</a>
             </td>
           </tr>
-        </table>
-      </td></tr>
-
-      <!-- offer panel -->
-      <tr><td style="padding:0 24px 44px">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid ${gold};border-bottom:1px solid ${gold};background:rgba(200,169,118,.06)">
-          <tr><td align="center" style="padding:40px 30px">
-            <p style="font-family:${serif};font-size:24px;font-style:italic;line-height:1.5;color:${paper};margin:0 0 22px 0">Exclusive Offer only available on the day.<br/>Opens at <em style="font-style:normal;color:${goldHi};font-weight:500">11 AM</em>.</p>
-            <div style="font-family:${caps};font-size:12px;font-weight:500;letter-spacing:.36em;text-transform:uppercase;color:${gold}">By Invitation Only</div>
-          </td></tr>
         </table>
       </td></tr>
 
