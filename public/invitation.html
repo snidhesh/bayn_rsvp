@@ -195,7 +195,7 @@
 
 <!-- ============ Shared background video ============ -->
 <video id="bg" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
-  <source src="/hero_spash_banner.mp4" type="video/mp4">
+  <source src="hero_spash_banner.mp4" type="video/mp4">
 </video>
 
 <!-- ============ SCREEN 1 : the disc, alone ============ -->
@@ -229,7 +229,7 @@
     <div class="card">
       <p class="lede">You don't get many days like this in Dubai. One day, one price, and it doesn't come back.</p>
 
-      <img class="bayn-mark" src="/bayn-logo-web-white.png" alt="Bayn by ORA">
+      <img class="bayn-mark" src="bayn-logo-web-white.png" alt="Bayn by ORA">
       <div class="bayn-sub">An Open House</div>
 
       <!-- formal itinerary -->
@@ -277,7 +277,7 @@
       <span class="tick-tr" aria-hidden="true"></span>
       <span class="tick-bl" aria-hidden="true"></span>
       <video autoplay muted loop playsinline preload="metadata" aria-label="Coastal views of Bayn">
-        <source src="/costal_views.mp4" type="video/mp4">
+        <source src="costal_views.mp4" type="video/mp4">
       </video>
     </figure>
 
@@ -317,7 +317,7 @@
     <!-- footer: BlackOak logo, framed by gold rules -->
     <div class="foot">
       <div class="host-label">Hosted by</div>
-      <img class="host-logo" src="/blackoak-logo-2k.png" alt="BlackOak Real Estate">
+      <img class="host-logo" src="blackoak-logo-2k.png" alt="BlackOak Real Estate">
       <div class="foot-rule" aria-hidden="true">
         <span></span>
         <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>
@@ -357,7 +357,7 @@ document.getElementById('form').addEventListener('submit',async e=>{
   // Post to CRM. WhatsApp is the guaranteed confirmation channel, so we
   // always proceed to the confirmation reveal even if the CRM call fails.
   try{
-    await fetch('/api/invitation',{
+    await fetch('api/invitation',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name,phone,look,guests})
