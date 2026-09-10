@@ -518,6 +518,8 @@ document.getElementById('form').addEventListener('submit',async e=>{
   // Reset the sheet's internal scroll so the confirmation starts at the top,
   // otherwise the guest may see the panel mid-page if they were near the form.
   inv.scrollTop=0;
+  // Mute the hero video so it doesn't compete with the Vimeo reveal's audio.
+  setAudio(false);
 });
 </script>
 </body>
