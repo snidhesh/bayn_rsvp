@@ -1,25 +1,14 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { Resend } from "resend";
 import type { InvitationLead } from "./crm";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-// Cache the base64-encoded logos so repeated invocations don't re-read from
-// disk. Vercel serverless functions can reuse warm containers.
-let logoCache: { bayn?: string; blackoak?: string } = {};
-async function readLogoAsDataUri(filename: string): Promise<string> {
-  const cacheKey = filename.includes("blackoak") ? "blackoak" : "bayn";
-  if (logoCache[cacheKey]) return logoCache[cacheKey]!;
-  try {
-    const buf = await readFile(path.join(process.cwd(), "public", filename));
-    const uri = `data:image/png;base64,${buf.toString("base64")}`;
-    logoCache[cacheKey] = uri;
-    return uri;
-  } catch {
-    return "";
-  }
-}
+// Public URLs for the logos. Base64 data-URIs are stripped by Gmail /
+// Outlook.com / Yahoo, so we host through the parent domain (proxied via
+// blackoak-website → baynrsvp.vercel.app).
+const PUBLIC_BASE = "https://www.blackoak-re.com/baynopenhouse";
+const BAYN_LOGO_URL = `${PUBLIC_BASE}/bayn-logo.png`;
+const BLACKOAK_LOGO_URL = `${PUBLIC_BASE}/blackoak-logo-2k.png`;
 
 const MAP_URL = "https://maps.app.goo.gl/d9ZtYm3hXjHPRweV6";
 
@@ -32,18 +21,13 @@ export async function sendInvitationConfirmation(lead: InvitationLead): Promise<
   const from = process.env.RESEND_FROM ?? "Bayn <invitation@blackoak-re.com>";
   const firstName = (lead.name.split(/\s+/)[0] ?? "").trim() || "Guest";
 
-  const [baynLogo, blackoakLogo] = await Promise.all([
-    readLogoAsDataUri("bayn-logo.png"),
-    readLogoAsDataUri("blackoak-logo-2k.png"),
-  ]);
-
   try {
     const { error } = await resend.emails.send({
       from,
       to: lead.email,
       subject: `Thank you ${firstName} — you are on the Bayn list`,
       replyTo: "openday@blackoak-re.com",
-      html: renderHtml({ firstName, baynLogo, blackoakLogo }),
+      html: renderHtml({ firstName }),
       text: renderText(firstName),
     });
     if (error) {
@@ -71,15 +55,13 @@ function renderText(firstName: string): string {
     "Exclusive Offer only available on the day. Opens at 11 AM.",
     "By Invitation Only.",
     "",
-    "We will confirm on WhatsApp soon.",
-    "",
     "Hosted by BlackOak Real Estate",
     "In partnership with ORA Developers · © 2026 BlackOak Real Estate",
   ].join("\n");
 }
 
-function renderHtml(args: { firstName: string; baynLogo: string; blackoakLogo: string }): string {
-  const { firstName, baynLogo, blackoakLogo } = args;
+function renderHtml(args: { firstName: string }): string {
+  const { firstName } = args;
   const name = escapeHtml(firstName);
 
   // Palette matches public/invitation.html
@@ -93,13 +75,8 @@ function renderHtml(args: { firstName: string; baynLogo: string; blackoakLogo: s
   const caps = "'Cinzel', 'Playfair Display', Georgia, serif";
   const sans = "'Inter', 'Helvetica Neue', Arial, sans-serif";
 
-  const baynImg = baynLogo
-    ? `<img src="${baynLogo}" alt="Bayn" width="140" style="display:block;width:140px;height:auto;margin:0 auto" />`
-    : `<div style="font-family:${serif};font-size:32px;color:${paper};letter-spacing:.02em">Bayn</div>`;
-
-  const blackoakImg = blackoakLogo
-    ? `<img src="${blackoakLogo}" alt="BlackOak Real Estate" height="30" style="display:block;height:30px;width:auto;margin:0 auto" />`
-    : `<div style="font-family:${caps};font-size:12px;color:${goldHi};letter-spacing:.36em;text-transform:uppercase">BlackOak Real Estate</div>`;
+  const baynImg = `<img src="${BAYN_LOGO_URL}" alt="Bayn" width="140" style="display:block;width:140px;height:auto;margin:0 auto;border:0" />`;
+  const blackoakImg = `<img src="${BLACKOAK_LOGO_URL}" alt="BlackOak Real Estate" height="30" style="display:block;height:30px;width:auto;margin:0 auto;border:0" />`;
 
   return `<!doctype html>
 <html lang="en">
@@ -165,11 +142,6 @@ function renderHtml(args: { firstName: string; baynLogo: string; blackoakLogo: s
             <div style="font-family:${caps};font-size:12px;font-weight:500;letter-spacing:.36em;text-transform:uppercase;color:${gold}">By Invitation Only</div>
           </td></tr>
         </table>
-      </td></tr>
-
-      <!-- WhatsApp note -->
-      <tr><td align="center" style="padding:0 24px 40px">
-        <p style="font-family:${serif};font-size:18px;font-style:italic;line-height:1.6;color:${paper};opacity:.9;max-width:440px;margin:0 auto">We will confirm with you on WhatsApp soon. We look forward to welcoming you.</p>
       </td></tr>
 
       <!-- divider -->
