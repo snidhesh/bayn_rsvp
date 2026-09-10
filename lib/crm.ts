@@ -14,6 +14,7 @@ interface CrmPayload {
   email: string;
   requirements: string;
   source: string;
+  ref?: string;
 }
 
 async function postToCrm(payload: CrmPayload): Promise<{ ok: boolean; status: number; body?: string }> {
@@ -58,6 +59,13 @@ export interface InvitationLead {
   email: string;
   look: string;
   guests: string;
+  /**
+   * Agent-referral slug from the CTA URL (`?ref=<agent-slug>`). Forwarded to
+   * the CRM so an active sales agent's slug auto-assigns the created lead.
+   * Silent-ignored server-side if unknown/invalid — safe to pass an empty
+   * string or omit entirely.
+   */
+  ref?: string;
 }
 
 export async function postInvitationLead(lead: InvitationLead) {
@@ -67,11 +75,15 @@ export async function postInvitationLead(lead: InvitationLead) {
     "Event: Bayn Open House — 19th September (Invitation)",
   ].join(" | ");
 
-  return postToCrm({
+  const payload: CrmPayload = {
     name: lead.name,
     phone: lead.phone,
     email: lead.email,
     requirements,
     source: "bayn-open-day-invitation",
-  });
+  };
+  if (lead.ref && lead.ref.trim() !== "") {
+    payload.ref = lead.ref.trim();
+  }
+  return postToCrm(payload);
 }

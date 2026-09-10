@@ -21,6 +21,17 @@ const LeadSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
   look: z.string().trim().min(1, "Please pick what you're here for"),
   guests: z.string().trim().min(1, "Guests is required"),
+  // Agent-referral slug from the CTA URL (`?ref=<agent-slug>`). Optional;
+  // shape-checked here to keep obviously-bad input off the wire, but the CRM
+  // silent-ignores anything it can't resolve so we never fail the submission
+  // over a ref problem.
+  ref: z
+    .string()
+    .trim()
+    .max(120)
+    .regex(/^[a-z0-9-]*$/i, "Invalid ref format")
+    .optional()
+    .default(""),
 });
 
 /**

@@ -498,13 +498,20 @@ document.getElementById('form').addEventListener('submit',async e=>{
   submit.disabled=true;
   submit.innerHTML='Sealing…';
 
+  // Agent-referral slug from the CTA URL (?ref=<agent-slug>). Read once at
+  // submit time so a page-open-with-ref → later-submit still carries it.
+  // Shape-check keeps obvious garbage out of the wire payload; the CRM
+  // silent-ignores anything it can't resolve so this can never block submit.
+  const refParam = (new URLSearchParams(window.location.search).get('ref') || '').trim();
+  const ref = /^[a-z0-9-]{0,120}$/i.test(refParam) ? refParam : '';
+
   // Post to CRM. WhatsApp is the guaranteed confirmation channel, so we
   // always proceed to the confirmation reveal even if the CRM call fails.
   try{
     await fetch('api/invitation',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,phone,email,look,guests})
+      body:JSON.stringify({name,phone,email,look,guests,ref})
     });
   }catch(err){
     console.error('CRM submission failed',err);
