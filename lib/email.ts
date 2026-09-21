@@ -47,7 +47,7 @@ function renderText(firstName: string): string {
     "",
     "Thank you. You are added to the Bayn list.",
     "",
-    "The Date    Saturday, 19th September",
+    "The Date    Saturday, 3rd October",
     "The Hours   11 AM – 4 PM",
     `The Address Ora Sales Center, Jumeirah 3, Dubai`,
     `Map:        ${MAP_URL}`,
@@ -114,7 +114,7 @@ function renderHtml(args: { firstName: string }): string {
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid rgba(200,169,118,.42);border-bottom:1px solid rgba(200,169,118,.42)">
           <tr>
             <td width="130" style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${caps};font-size:11.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:${gold};vertical-align:top">The Date</td>
-            <td style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${serif};font-size:22px;color:${paper}">Saturday, 19<sup style="font-size:.5em;color:${gold};font-style:italic;vertical-align:.9em">th</sup> September</td>
+            <td style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${serif};font-size:22px;color:${paper}">Saturday, 3<sup style="font-size:.5em;color:${gold};font-style:italic;vertical-align:.9em">rd</sup> October</td>
           </tr>
           <tr>
             <td style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${caps};font-size:11.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:${gold};vertical-align:top">The Hours</td>

@@ -292,7 +292,7 @@
       <div class="itin">
         <div class="itin-row">
           <div class="itin-k">The Date</div>
-          <div class="itin-v">Saturday, 19<sup>th</sup> September</div>
+          <div class="itin-v">Saturday, 3<sup>rd</sup> October</div>
         </div>
         <div class="itin-row">
           <div class="itin-k">The Hours</div>
@@ -373,7 +373,7 @@
     <div id="confirm">
       <div class="sm">Confirmed</div>
       <h2 class="conf-head" id="confhead">Thank you. You are added to the list.</h2>
-      <div class="reveal" id="reveal" aria-hidden="true">
+      <div class="reveal" id="reveal" aria-hidden="true" hidden>
         <span class="tick-tr"></span>
         <span class="tick-bl"></span>
         <div class="reveal-frame" id="revealFrame"><!-- Vimeo iframe injected here on submit --></div>
@@ -445,6 +445,7 @@ document.getElementById('rsvp').addEventListener('click',()=>{
    an individual reveal moment. Add more Vimeo IDs as they arrive — the
    more IDs, the lower the collision rate.
 */
+const SHOW_REVEAL=false;   // set true to bring the Vimeo reveal back on the confirmation panel
 const REVEAL_VIDEOS=[
   '1225189972',   // placeholder — replace / add more when the reveal reel URLs come in
 ];
@@ -519,20 +520,23 @@ document.getElementById('form').addEventListener('submit',async e=>{
 
   const first=name.split(' ')[0];
   document.getElementById('confhead').textContent=`Thank you ${first}. You are added to the list.`;
-  const msg=`Hi Bayn team, I am confirming for the Bayn Open House on Saturday 19th September.\nName: ${name}\nEmail: ${email}\nLooking at: ${look}\nComing with: ${guests}`;
+  const msg=`Hi Bayn team, I am confirming for the Bayn Open House on Saturday 3rd October.\nName: ${name}\nEmail: ${email}\nLooking at: ${look}\nComing with: ${guests}`;
   document.getElementById('wa').href=`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
   submit.disabled=false;
   submit.innerHTML=originalHtml;
 
   // Pick a random reveal video for this guest.
-  const vid=REVEAL_VIDEOS[Math.floor(Math.random()*REVEAL_VIDEOS.length)];
-  const frame=document.getElementById('revealFrame');
-  const iframe=document.createElement('iframe');
-  iframe.src=`https://player.vimeo.com/video/${vid}?autoplay=1&muted=1&title=0&byline=0&portrait=0&dnt=1`;
-  iframe.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
-  iframe.setAttribute('allowfullscreen','');
-  iframe.setAttribute('title','A message for you');
-  frame.appendChild(iframe);
+  if(SHOW_REVEAL){
+    const vid=REVEAL_VIDEOS[Math.floor(Math.random()*REVEAL_VIDEOS.length)];
+    const frame=document.getElementById('revealFrame');
+    const iframe=document.createElement('iframe');
+    iframe.src=`https://player.vimeo.com/video/${vid}?autoplay=1&muted=1&title=0&byline=0&portrait=0&dnt=1`;
+    iframe.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
+    iframe.setAttribute('allowfullscreen','');
+    iframe.setAttribute('title','A message for you');
+    frame.appendChild(iframe);
+    document.getElementById('reveal').hidden=false;
+  }
 
   // Collapse the pre-submission content and reveal the confirmation panel.
   document.querySelector('.wrap').classList.add('done');
@@ -541,7 +545,7 @@ document.getElementById('form').addEventListener('submit',async e=>{
   // otherwise the guest may see the panel mid-page if they were near the form.
   inv.scrollTop=0;
   // Mute the hero video so it doesn't compete with the Vimeo reveal's audio.
-  setAudio(false);
+  if(SHOW_REVEAL)setAudio(false);
 });
 </script>
 </body>

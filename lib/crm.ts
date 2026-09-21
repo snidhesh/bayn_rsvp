@@ -72,7 +72,7 @@ export async function postInvitationLead(lead: InvitationLead) {
   const requirements = [
     `Interested in: ${lead.look}`,
     `Guests: ${lead.guests}`,
-    "Event: Bayn Open House — 19th September (Invitation)",
+    "Event: Bayn Open Day — 3rd October (Invitation)",
   ].join(" | ");
 
   const payload: CrmPayload = {
@@ -80,7 +80,7 @@ export async function postInvitationLead(lead: InvitationLead) {
     phone: lead.phone,
     email: lead.email,
     requirements,
-    source: "bayn-open-day-invitation",
+    source: "Bayn Open Day",
   };
   if (lead.ref && lead.ref.trim() !== "") {
     payload.ref = lead.ref.trim();
