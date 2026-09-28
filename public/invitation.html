@@ -292,7 +292,7 @@
       <div class="itin">
         <div class="itin-row">
           <div class="itin-k">The Date</div>
-          <div class="itin-v">Saturday, 3<sup>rd</sup> October</div>
+          <div class="itin-v" id="eventDate">Mid-October 2026<br><span style="color:var(--mute);font-size:.85em;font-style:italic">Exact date shared personally with confirmed guests</span></div>
         </div>
         <div class="itin-row">
           <div class="itin-k">The Hours</div>
@@ -396,6 +396,14 @@
 </section>
 
 <script>
+/* ---------- event date ----------
+   null shows "Mid-October 2026 — exact date shared personally with
+   confirmed guests". Set to the day number (e.g. '10') to show the exact date;
+   keep in sync with EVENT_DAY in lib/event.ts (CRM + email).
+*/
+const EVENT_DAY=null;
+if(EVENT_DAY)document.getElementById('eventDate').innerHTML=`Saturday, ${EVENT_DAY}<sup>th</sup> October`;
+
 /* ---------- audio ----------
    Browsers block autoplay-with-sound on first page load. We start muted
    (guaranteed to autoplay), then let the guest tap the mute toggle in
@@ -520,7 +528,7 @@ document.getElementById('form').addEventListener('submit',async e=>{
 
   const first=name.split(' ')[0];
   document.getElementById('confhead').textContent=`Thank you ${first}. You are added to the list.`;
-  const msg=`Hi Bayn team, I am confirming for the Bayn Open House on Saturday 3rd October.\nName: ${name}\nEmail: ${email}\nLooking at: ${look}\nComing with: ${guests}`;
+  const msg=`Hi Bayn team, I would like to reserve my place at the Bayn Open House${EVENT_DAY?` on Saturday ${EVENT_DAY}th October`:''}.\nName: ${name}\nEmail: ${email}\nLooking at: ${look}\nComing with: ${guests}`;
   document.getElementById('wa').href=`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
   submit.disabled=false;
   submit.innerHTML=originalHtml;

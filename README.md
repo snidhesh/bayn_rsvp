@@ -1,6 +1,6 @@
 # Bayn — By Private Invitation
 
-Standalone invitation page for the Bayn by ORA Open House, **Saturday 3rd October, 11 AM – 4 PM, ORA Sales Center, Jumeirah 3, Dubai**. Hosted by BlackOak Real Estate.
+Standalone invitation page for the Bayn by ORA Open House, **Saturday 10th or 17th October (date TBC — guests see "Mid-October 2026, exact date shared personally" until `EVENT_DAY` is set in `lib/event.ts` and `public/invitation.html`), 11 AM – 4 PM, ORA Sales Center, Jumeirah 3, Dubai**. Hosted by BlackOak Real Estate.
 
 - Cinematic splash: hero video + gold RSVP disc, no reveal until the disc is clicked.
 - Slide-up invitation sheet: Bayn logo, itinerary, gold-framed sealed offer, portrait reel, form.

@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import type { InvitationLead } from "./crm";
+import { EVENT_DAY, EVENT_DATE_TEXT } from "./event";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -47,7 +48,7 @@ function renderText(firstName: string): string {
     "",
     "Thank you. You are added to the Bayn list.",
     "",
-    "The Date    Saturday, 3rd October",
+    `The Date    ${EVENT_DATE_TEXT}`,
     "The Hours   11 AM – 4 PM",
     `The Address Ora Sales Center, Jumeirah 3, Dubai`,
     `Map:        ${MAP_URL}`,
@@ -71,6 +72,11 @@ function renderHtml(args: { firstName: string }): string {
   const serif = "'Playfair Display', Georgia, 'Times New Roman', serif";
   const caps = "'Cinzel', 'Playfair Display', Georgia, serif";
   const sans = "'Inter', 'Helvetica Neue', Arial, sans-serif";
+
+  const th = `<sup style="font-size:.5em;color:${gold};font-style:italic;vertical-align:.9em">th</sup>`;
+  const dateHtml = EVENT_DAY
+    ? `Saturday, ${EVENT_DAY}${th} October`
+    : `Mid-October 2026<br/><span style="color:${mute};font-size:.85em;font-style:italic">Exact date shared personally with confirmed guests</span>`;
 
   const baynImg = `<img src="${BAYN_LOGO_URL}" alt="Bayn" width="140" style="display:block;width:140px;height:auto;margin:0 auto;border:0" />`;
   const blackoakImg = `<img src="${BLACKOAK_LOGO_URL}" alt="BlackOak Real Estate" height="30" style="display:block;height:30px;width:auto;margin:0 auto;border:0" />`;
@@ -114,7 +120,7 @@ function renderHtml(args: { firstName: string }): string {
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid rgba(200,169,118,.42);border-bottom:1px solid rgba(200,169,118,.42)">
           <tr>
             <td width="130" style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${caps};font-size:11.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:${gold};vertical-align:top">The Date</td>
-            <td style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${serif};font-size:22px;color:${paper}">Saturday, 3<sup style="font-size:.5em;color:${gold};font-style:italic;vertical-align:.9em">rd</sup> October</td>
+            <td style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${serif};font-size:22px;color:${paper}">${dateHtml}</td>
           </tr>
           <tr>
             <td style="padding:18px 0;border-bottom:1px solid rgba(200,169,118,.28);font-family:${caps};font-size:11.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:${gold};vertical-align:top">The Hours</td>

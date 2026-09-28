@@ -8,6 +8,8 @@
  * as the lead's notes in Studio.
  */
 
+import { EVENT_DATE_INTERNAL } from "./event";
+
 interface CrmPayload {
   name: string;
   phone: string;
@@ -72,7 +74,7 @@ export async function postInvitationLead(lead: InvitationLead) {
   const requirements = [
     `Interested in: ${lead.look}`,
     `Guests: ${lead.guests}`,
-    "Event: Bayn Open Day — 3rd October (Invitation)",
+    `Event: Bayn Open Day — ${EVENT_DATE_INTERNAL} (Invitation)`,
   ].join(" | ");
 
   const payload: CrmPayload = {
