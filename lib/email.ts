@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import type { InvitationLead } from "./crm";
-import { EVENT_DAY, EVENT_DATE_TEXT } from "./event";
+import { EVENT_DATE_TEXT } from "./event";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -74,9 +74,7 @@ function renderHtml(args: { firstName: string }): string {
   const sans = "'Inter', 'Helvetica Neue', Arial, sans-serif";
 
   const th = `<sup style="font-size:.5em;color:${gold};font-style:italic;vertical-align:.9em">th</sup>`;
-  const dateHtml = EVENT_DAY
-    ? `Saturday, ${EVENT_DAY}${th} October`
-    : `Mid-October 2026<br/><span style="color:${mute};font-size:.85em;font-style:italic">Exact date shared personally with confirmed guests</span>`;
+  const dateHtml = `Saturday, 7${th} November 2026`;
 
   const baynImg = `<img src="${BAYN_LOGO_URL}" alt="Bayn" width="140" style="display:block;width:140px;height:auto;margin:0 auto;border:0" />`;
   const blackoakImg = `<img src="${BLACKOAK_LOGO_URL}" alt="BlackOak Real Estate" height="30" style="display:block;height:30px;width:auto;margin:0 auto;border:0" />`;
