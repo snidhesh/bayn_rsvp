@@ -8,6 +8,7 @@ out
 *.log
 .DS_Store
 next-env.d.ts
+tsconfig.tsbuildinfo
 
 # large source media (compress + upload to Vimeo instead)
 Open House - Dana.mp4
