@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { postInvitationLead } from "@/lib/crm";
-import { sendInvitationConfirmation } from "@/lib/email";
+import { sendInvitationConfirmation, sendInternalLeadNotification } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -40,8 +40,9 @@ const LeadSchema = z.object({
  * Handles the invitation form on public/invitation.html:
  *   1. Validate the payload.
  *   2. Post to the BlackOak CRM (studio.blackoak-re.com).
- *   3. Send a branded confirmation email to the guest via Resend.
- * All three run in sequence; failures are logged but never block the 200
+ *   3. Send an internal copy of the lead (with the CRM result) to the team.
+ *   4. Send a branded confirmation email to the guest via Resend.
+ * All run in sequence; failures are logged but never block the 200
  * response so the client-side confirmation always renders. WhatsApp remains
  * the guaranteed confirmation channel.
  */
@@ -64,6 +65,11 @@ export async function POST(req: Request) {
   const crmResult = await postInvitationLead(parsed.data);
   if (!crmResult.ok) {
     console.error(`[invitation] CRM did not accept lead: status=${crmResult.status}`);
+  }
+
+  const internalResult = await sendInternalLeadNotification(parsed.data, crmResult);
+  if (!internalResult.ok) {
+    console.error(`[invitation] Internal notification not sent: ${internalResult.error ?? "unknown"}`);
   }
 
   const emailResult = await sendInvitationConfirmation(parsed.data);

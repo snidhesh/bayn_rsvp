@@ -13,6 +13,91 @@ const BLACKOAK_LOGO_URL = `${PUBLIC_BASE}/blackoak-logo-2k.png`;
 
 const MAP_URL = "https://maps.app.goo.gl/d9ZtYm3hXjHPRweV6";
 
+// Internal copy of every submission, so the team still has the full lead even
+// if the CRM intake rejects it. Comma-separate to add more recipients.
+const INTERNAL_LEAD_TO = (process.env.LEAD_NOTIFY_TO ?? "it@blackoak-re.com")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+export interface CrmOutcome {
+  ok: boolean;
+  status: number;
+  body?: string;
+}
+
+/**
+ * Plain internal notification with every field the guest submitted plus the
+ * CRM result. Fires on every submission regardless of CRM or guest-email
+ * outcome; the subject is prefixed when the CRM did not accept the lead so
+ * those stand out in the inbox.
+ */
+export async function sendInternalLeadNotification(
+  lead: InvitationLead,
+  crm: CrmOutcome
+): Promise<{ ok: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY not set — skipping internal lead notification");
+    return { ok: false, error: "no-resend-key" };
+  }
+  if (INTERNAL_LEAD_TO.length === 0) {
+    return { ok: false, error: "no-internal-recipient" };
+  }
+
+  const from = process.env.RESEND_FROM ?? "Bayn <invitation@blackoak-re.com>";
+  const crmLabel = crm.ok
+    ? `Accepted (HTTP ${crm.status})`
+    : crm.status === 0
+      ? `NOT SENT (${crm.body ?? "unknown"})`
+      : `REJECTED (HTTP ${crm.status}) ${(crm.body ?? "").slice(0, 200)}`;
+  const subject = `${crm.ok ? "" : "[CRM FAILED] "}Bayn RSVP: ${lead.name} — ${lead.look}`;
+
+  const rows: Array<[string, string]> = [
+    ["Name", lead.name],
+    ["Phone", lead.phone],
+    ["Email", lead.email],
+    ["Looking at", lead.look],
+    ["Guests", lead.guests],
+    ["Referral", lead.ref && lead.ref.trim() ? lead.ref.trim() : "—"],
+    ["Event", `Bayn Open Day — ${EVENT_DATE_TEXT}`],
+    ["CRM", crmLabel],
+    ["Received", new Date().toISOString()],
+  ];
+
+  const text = rows.map(([k, v]) => `${k.padEnd(11)} ${v}`).join("\n");
+  const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111">
+<h2 style="font-size:16px;margin:0 0 12px">New Bayn Open Day RSVP</h2>
+<table cellspacing="0" cellpadding="6" style="border-collapse:collapse">
+${rows
+  .map(
+    ([k, v]) =>
+      `<tr><td style="border:1px solid #ddd;font-weight:bold;white-space:nowrap">${escapeHtml(k)}</td><td style="border:1px solid #ddd">${escapeHtml(v)}</td></tr>`
+  )
+  .join("\n")}
+</table>
+<p style="color:#666;font-size:12px;margin-top:16px">Sent automatically by the Bayn RSVP page. Reply goes to the guest.</p>
+</body></html>`;
+
+  try {
+    const { error } = await resend.emails.send({
+      from,
+      to: INTERNAL_LEAD_TO,
+      subject,
+      replyTo: lead.email,
+      html,
+      text,
+    });
+    if (error) {
+      console.error("[email] internal notification failed:", error.message);
+      return { ok: false, error: error.message };
+    }
+    return { ok: true };
+  } catch (err) {
+    console.error("[email] internal notification threw", err);
+    return { ok: false, error: String(err) };
+  }
+}
+
 export async function sendInvitationConfirmation(lead: InvitationLead): Promise<{ ok: boolean; error?: string }> {
   if (!resend) {
     console.warn("[email] RESEND_API_KEY not set — skipping confirmation email");
