@@ -39,6 +39,18 @@ npm run dev
 | `BLACKOAK_CRM_TOKEN` | Bearer token for the CRM |
 | `NEXT_PUBLIC_BASE_PATH` | Set to `/baynopenhouse` in Vercel Production + Preview so the app serves under the parent site's proxy path. Leave blank for local dev. |
 
+## Google Ads tracking
+
+The page carries the same Google tag as `/bayn/` (`AW-17699566934`) and fires:
+
+| Moment | gtag event | Conversion label setting |
+|---|---|---|
+| RSVP disc clicked, sheet opens | `open_day_rsvp_open` | none (engagement only) |
+| Form submitted, confirmation shown | `open_day_rsvp` | `ADS.rsvpLabel` |
+| "Confirm on WhatsApp" clicked | `open_day_whatsapp` | `ADS.whatsappLabel` |
+
+Create the two conversion actions in Google Ads (Goals → Conversions → New → Website, category *Submit lead form*, count *One*) and paste their labels into the `ADS` block at the top of the page script in `public/invitation.html`. Until a label is pasted, the named events still reach the account and can be promoted to conversions from *Create from Google tag events*. The RSVP conversion sends the guest's email and phone as enhanced-conversion data; turn on *Enhanced conversions* on that action in Google Ads for it to be used, or set `ADS.enhancedConversions` to `false`.
+
 ## Adding more reveal videos
 
 The invitation randomly picks a Vimeo video from a pool on each successful RSVP so two guests sitting side-by-side see different reveals. Add IDs to the array at the top of the `<script>` block in `public/invitation.html`:

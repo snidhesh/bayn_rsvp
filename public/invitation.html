@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bayn — By Private Invitation</title>
+<!-- Google tag (Google Ads AW-17699566934, same account as /bayn/).
+     Conversion labels live in the ADS settings block in the script below. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17699566934"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17699566934');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -396,6 +405,28 @@
 </section>
 
 <script>
+/* ---------- Google Ads tracking ----------
+   Paste the conversion labels from Google Ads > Goals > Conversions after
+   creating the two actions ("Open Day RSVP" and "Open Day WhatsApp"). The
+   label is the part after the slash in "AW-17699566934/AbCdEfGh".
+   Until a label is set, the same moment still fires a named gtag event
+   (open_day_rsvp / open_day_whatsapp), which Google Ads can turn into a
+   conversion under "Create from Google tag events" without a code change.
+*/
+const ADS={
+  id:'AW-17699566934',
+  rsvpLabel:'',          // Open Day RSVP  — form submitted, confirmation shown
+  whatsappLabel:'',      // Open Day WhatsApp — "Confirm on WhatsApp" clicked
+  enhancedConversions:true   // send hashed email/phone with the RSVP so Google can match the lead
+};
+function track(name,label,userData){
+  if(typeof gtag!=='function')return;
+  try{
+    if(userData&&ADS.enhancedConversions)gtag('set','user_data',userData);
+    if(label){gtag('event','conversion',{send_to:`${ADS.id}/${label}`});}
+    gtag('event',name,{send_to:ADS.id});
+  }catch(err){console.error('tracking failed',err)}
+}
 /* ---------- event date ----------
    Saturday, 7th November 2026 — rendered in #eventDate above and in the
    WhatsApp message below; keep in sync with lib/event.ts (CRM + email).
@@ -439,6 +470,7 @@ if(muteToggle){
 
 /* ---------- transition: RSVP → slide up ---------- */
 document.getElementById('rsvp').addEventListener('click',()=>{
+  track('open_day_rsvp_open');
   setAudio(true);       // ensure sound is on when the sheet rises
   inv.classList.add('on');
   sea.classList.add('gone');
@@ -457,6 +489,8 @@ const REVEAL_VIDEOS=[
 
 /* ---------- form → CRM → confirmation ---------- */
 const wa=getComputedStyle(document.documentElement).getPropertyValue('--wa').trim().replace(/^"|"$/g,'');
+document.getElementById('wa').addEventListener('click',()=>track('open_day_whatsapp',ADS.whatsappLabel));
+
 document.getElementById('form').addEventListener('submit',async e=>{
   e.preventDefault();
   const name=document.getElementById('name').value.trim(),
@@ -522,6 +556,12 @@ document.getElementById('form').addEventListener('submit',async e=>{
   }catch(err){
     console.error('CRM submission failed',err);
   }
+
+  // Google Ads conversion. Fired once the guest reaches the confirmation
+  // panel, whether or not the CRM call above succeeded, so it mirrors what
+  // the guest saw. Enhanced-conversion data is sent as plain text here and
+  // hashed by the Google tag before it leaves the browser.
+  track('open_day_rsvp',ADS.rsvpLabel,{email,phone_number:'+'+phoneDigits});
 
   const first=name.split(' ')[0];
   document.getElementById('confhead').textContent=`Thank you ${first}. You are added to the list.`;
